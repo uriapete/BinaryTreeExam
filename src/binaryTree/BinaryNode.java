@@ -1,41 +1,64 @@
 package binaryTree;
 
+import java.util.ArrayList;
 import java.util.function.Consumer;
 
 public class BinaryNode<T extends Comparable<T>> {
 
     public T key;
-    BinaryNode<T> left;
-    BinaryNode<T> right;
+    // list of children, left or right
+    private final ArrayList<BinaryNode<T>> children = new ArrayList<BinaryNode<T>>(2);
     public BinaryNode<T> parent;
 
+    // direction — left, right
+    enum Direction{
+        Left(0), Right(1);
+
+        public final int idx;
+        private static Direction[] dirs = {Left,Right};
+        private Direction(int id) {
+            this.idx = id;
+        }
+
+        public Direction getDirection(int id){
+            return dirs[(id%2)];
+        }
+        
+    }
+
+    // default constructor sets binary node children
     public BinaryNode() {
+        for(Direction d : Direction.values()){
+            children.add(null);
+        }
     }
 
     public BinaryNode(T k) {
+        // set binary node children
+        this();
+        // set key
         key = k;
     }
 
-    // helper fn - insert left child, return bool for success
-    private boolean insertLeft(BinaryNode<T> node) {
-        if (left == null) {
-            node.parent = this;
-            left = node;
-            return true;
-        }
-        return false;
+    // helper fn - same as below override, but first arg is dir enum instead of int idx
+    private boolean insertChild(Direction dir, BinaryNode<T> node){
+        return insertChild(dir.idx, node);
     }
-    // helper fn - insert right child, return bool for success
 
-    private boolean insertRight(BinaryNode<T> node) {
-        if (right == null) {
+    // helper fn - insert child in specified direction, return bool for success
+    private boolean insertChild(int diridx, BinaryNode<T> node){
+        // if children dne,
+        // set children
+        if (children.get(diridx) == null) {
             node.parent = this;
-            right = node;
+            children.set(diridx, node);
             return true;
         }
+        // else, can't insert children in place where child already exists!
         return false;
     }
 
+    // creates a key and inserts it as a descendant (if key does not already exist in this subtree)
     public boolean insertKey(T k) {
         if (k == key) {
             return false;
@@ -43,39 +66,40 @@ public class BinaryNode<T extends Comparable<T>> {
         return insertNode(new BinaryNode<>(k));
     }
 
+    // inserts a node as child
     public boolean insertNode(BinaryNode<T> node) {
+        // if the new child's key is the same as this one's, NO!
         if (node.key.equals(key)) {
             return false;
         }
+
+        // this will signal if op is successful
         boolean newChild;
 
-        // if key needs to go left, try to insertLeft and recursive call (keep going down the tree) if left exists
-        if (node.key.compareTo(key) < 0) {
-            newChild = insertLeft(node);
-            if (newChild) {
-                return newChild;
-            }
-            return left.insertNode(node);
-        }
-        // do same as above but for the right
-        if (node.key.compareTo(key) > 0) {
-            newChild = insertRight(node);
-            if (newChild) {
-                return newChild;
-            }
-            return right.insertNode(node);
-        }
+        // get idx of new child...
+        // get value for key comparison: <0 if left, >0 if right
+        // add +1: 0<=x<1 for left, 1<x<=2
+        // floor and clamp: 0 for left, 1 for right. this is now our child index.
+        int childIdx = (int)Math.floor(Math.clamp(node.key.compareTo(key)+1, 0, 1));
 
-        return false;
+        // insert child
+        newChild = insertChild(childIdx, node);
+        if (newChild) {
+            return newChild;
+        }
+        
+        // if it didn't work, try descendents
+        return children.get(childIdx).insertNode(node);
     }
 
+    // traverse. visit left descendants, then this, then right descendants.
     protected void traverseInOrder(Consumer<BinaryNode<T>> operation) {
-        if (left != null) {
-            left.traverseInOrder(operation);
+        if (children.get(Direction.Left.idx) != null) {
+            children.get(Direction.Left.idx).traverseInOrder(operation);
         }
         operation.accept(this);
-        if (right != null) {
-            right.traverseInOrder(operation);
+        if (children.get(Direction.Right.idx) != null) {
+            children.get(Direction.Right.idx).traverseInOrder(operation);
         }
     }
 

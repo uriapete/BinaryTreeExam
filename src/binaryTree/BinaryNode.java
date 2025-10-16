@@ -2,10 +2,10 @@ package binaryTree;
 import java.util.function.Consumer;
 
 public class BinaryNode<T extends Comparable> {
-  T key;
+  public T key;
   BinaryNode<T> left;
   BinaryNode<T> right;
-  BinaryNode<T> parent;
+  public BinaryNode<T> parent;
   
   public BinaryNode(){}
   

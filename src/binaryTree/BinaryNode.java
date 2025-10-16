@@ -2,7 +2,7 @@ package binaryTree;
 
 import java.util.function.Consumer;
 
-public class BinaryNode<T extends Comparable> {
+public class BinaryNode<T extends Comparable<T>> {
 
     public T key;
     BinaryNode<T> left;
@@ -40,7 +40,7 @@ public class BinaryNode<T extends Comparable> {
         if (k == key) {
             return false;
         }
-        return insertNode(new BinaryNode<T>(k));
+        return insertNode(new BinaryNode<>(k));
     }
 
     public boolean insertNode(BinaryNode<T> node) {
@@ -69,7 +69,7 @@ public class BinaryNode<T extends Comparable> {
         return false;
     }
 
-    protected void traverseInOrder(Consumer<BinaryNode> operation) {
+    protected void traverseInOrder(Consumer<BinaryNode<T>> operation) {
         if (left != null) {
             left.traverseInOrder(operation);
         }
@@ -80,7 +80,7 @@ public class BinaryNode<T extends Comparable> {
     }
 
     public void printInOrder() {
-        traverseInOrder((BinaryNode node) -> {
+        traverseInOrder((BinaryNode<T> node) -> {
             System.out.println(node.key);
         });
     }

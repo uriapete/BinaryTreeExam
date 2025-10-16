@@ -8,7 +8,6 @@ public class BinaryNode<T extends Comparable<T>> {
     public T key;
     // list of children, left or right
     private final ArrayList<BinaryNode<T>> children = new ArrayList<BinaryNode<T>>(2);
-    public BinaryNode<T> parent;
 
     // direction — left, right
     enum Direction{
@@ -50,7 +49,6 @@ public class BinaryNode<T extends Comparable<T>> {
         // if children dne,
         // set children
         if (children.get(diridx) == null) {
-            node.parent = this;
             children.set(diridx, node);
             return true;
         }

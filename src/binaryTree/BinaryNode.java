@@ -1,6 +1,8 @@
 package binaryTree;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.function.Consumer;
 
 public class BinaryNode<T extends Comparable<T>> {
@@ -88,6 +90,46 @@ public class BinaryNode<T extends Comparable<T>> {
         
         // if it didn't work, try descendents
         return children.get(childIdx).insertNode(node);
+    }
+
+    // goes thru the tree by level, top to bottom
+    protected void traverseByLevel(Consumer<BinaryNode<T>> operation){
+        // queue of nodes
+        LinkedList<BinaryNode<T>> nodeQueue = new LinkedList<BinaryNode<T>>();
+
+        // init queue with this
+        nodeQueue.add(this);
+
+        // while the queue is not empty
+        while (!nodeQueue.isEmpty()) {
+            // next in line...
+            BinaryNode<T> curr = nodeQueue.remove();
+
+            // perform op on the next in line
+            operation.accept(curr);
+
+            // add all existing children in queue
+            for(Direction dir : Direction.dirs){
+                BinaryNode<T> nextChild = curr.children.get(dir.idx);
+                if (nextChild!=null) {
+                    nodeQueue.add(nextChild);
+                }
+            }
+        }
+    }
+
+    public void printByLevel(){
+        HashMap<String,Integer> info = new HashMap<String,Integer>();
+        info.put("count", 0);
+        info.put("currLvl", 0);
+        traverseByLevel((BinaryNode<T> node) -> {
+            System.out.print(node.key + " ");
+            info.replace("count", info.get("count")+1);
+            if (info.get("count")>=Math.pow(Direction.values().length, info.get("currLvl")+1)-1) {
+                info.replace("currLvl", info.get("currLvl")+1);
+                System.out.println();
+            }
+        });
     }
 
     // traverse. visit left descendants, then this, then right descendants.

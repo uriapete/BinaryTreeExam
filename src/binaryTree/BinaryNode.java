@@ -95,7 +95,7 @@ public class BinaryNode<T extends Comparable<T>> {
     // goes thru the tree by level, top to bottom
     protected void traverseByLevel(Consumer<BinaryNode<T>> operation){
         // queue of nodes
-        LinkedList<BinaryNode<T>> nodeQueue = new LinkedList<BinaryNode<T>>();
+        LinkedList<BinaryNode<T>> nodeQueue = new LinkedList<>();
 
         // init queue with this
         nodeQueue.add(this);

@@ -1,6 +1,8 @@
 package binaryTree;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.function.Consumer;
 
 public class BinaryNode<T extends Comparable<T>> {
@@ -90,6 +92,46 @@ public class BinaryNode<T extends Comparable<T>> {
         return children.get(childIdx).insertNode(node);
     }
 
+    // goes thru the tree by level, top to bottom
+    protected void traverseByLevel(Consumer<BinaryNode<T>> operation){
+        // queue of nodes
+        LinkedList<BinaryNode<T>> nodeQueue = new LinkedList<>();
+
+        // init queue with this
+        nodeQueue.add(this);
+
+        // while the queue is not empty
+        while (!nodeQueue.isEmpty()) {
+            // next in line...
+            BinaryNode<T> curr = nodeQueue.remove();
+
+            // perform op on the next in line
+            operation.accept(curr);
+
+            // add all existing children in queue
+            for(Direction dir : Direction.dirs){
+                BinaryNode<T> nextChild = curr.children.get(dir.idx);
+                if (nextChild!=null) {
+                    nodeQueue.add(nextChild);
+                }
+            }
+        }
+    }
+
+    public void printByLevel(){
+        HashMap<String,Integer> info = new HashMap<String,Integer>();
+        info.put("count", 0);
+        info.put("currLvl", 0);
+        traverseByLevel((BinaryNode<T> node) -> {
+            System.out.print(node.key + " ");
+            info.replace("count", info.get("count")+1);
+            if (info.get("count")>=Math.pow(Direction.values().length, info.get("currLvl")+1)-1) {
+                info.replace("currLvl", info.get("currLvl")+1);
+                System.out.println();
+            }
+        });
+    }
+
     // traverse. visit left descendants, then this, then right descendants.
     protected void traverseInOrder(Consumer<BinaryNode<T>> operation) {
         if (children.get(Direction.Left.idx) != null) {
@@ -105,6 +147,69 @@ public class BinaryNode<T extends Comparable<T>> {
         traverseInOrder((BinaryNode<T> node) -> {
             System.out.println(node.key);
         });
+    }
+
+    public LinkedList<ArrayList<BinaryNode<T>>> getTreeMap(){
+        // return var
+        LinkedList<ArrayList<BinaryNode<T>>> map = new LinkedList<>();
+
+        // add root to map
+        ArrayList<BinaryNode<T>> rootList = new ArrayList<>(1);
+        rootList.add(this);
+        map.add(rootList);
+        
+        int level = 0;
+        
+        // for each level...
+        while (true) {
+            // get the current level
+            ArrayList<BinaryNode<T>> currLevel = map.getLast();
+
+            // prepare the next level
+            ++level;
+            map.add(new ArrayList<>((int)Math.pow(children.size(), level)));
+            ArrayList<BinaryNode<T>> nextLevel = map.getLast();
+
+            // assume all children are null until otherwise
+            boolean currLvlAllNull = true;
+
+            // for each node in the current level...
+            // append all children to the next level
+            // add two nulls if the current node is null
+            for (BinaryNode<T> node : currLevel) {
+                if (node == null) {
+                    for (int j = 0; j < 2; j++) {
+                        nextLevel.add(null);
+                    }
+                    continue;
+                }
+                currLvlAllNull=false;
+                map.getLast().addAll(node.children);
+            }
+
+            // if the current level is all empty, remove the all node levels, return
+            if(currLvlAllNull){
+                for (int i = 0; i < 2; i++) {
+                    map.removeLast();
+                }
+                return map;
+            }
+        }
+    }
+
+    // just prints the map.
+    public void printMap(){
+        LinkedList<ArrayList<BinaryNode<T>>> map = this.getTreeMap();
+        for (ArrayList<BinaryNode<T>> level : map) {
+            for (BinaryNode<T> node : level) {
+                if (node == null) {
+                    System.out.print(" | ");
+                    continue;
+                }
+                System.out.print(""+node.key+" ");
+            }
+            System.out.println("");
+        }
     }
 
     // Follow the steps below to use this file

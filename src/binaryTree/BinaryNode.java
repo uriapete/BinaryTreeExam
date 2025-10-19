@@ -199,16 +199,49 @@ public class BinaryNode<T extends Comparable<T>> {
 
     // just prints the map.
     public void printMap(){
-        LinkedList<ArrayList<BinaryNode<T>>> map = this.getTreeMap();
-        for (ArrayList<BinaryNode<T>> level : map) {
+        ArrayList<ArrayList<BinaryNode<T>>> map = new ArrayList<>(this.getTreeMap());
+
+        // how many spaces between each element on the last level.
+        int numSpaces = 5;
+
+        // prepare list of level displays
+        String[] levelDispList = new String[map.size()];
+
+        // for each level (going in reverse)
+        for (int idx = map.size()-1; idx >= 0; --idx) {
+            // get current level
+            ArrayList<BinaryNode<T>> level = map.get(idx);
+
+            // prepare current level display (null -> "")
+            levelDispList[idx]="";
+            
+            // indent the line
+            for (int i = 0; i < numSpaces/2; i++) {
+                levelDispList[idx]+=" ";
+            }
+            
+            // for each node on level, print it and then spacing between
             for (BinaryNode<T> node : level) {
                 if (node == null) {
-                    System.out.print(" | ");
-                    continue;
+                    // System.out.print("|");
+                    levelDispList[idx]+="|";
+                }else{
+                    // System.out.print(node.key);
+                    levelDispList[idx]+=node.key;
                 }
-                System.out.print(""+node.key+" ");
+                for (int i = 0; i < numSpaces; i++) {
+                    // System.out.print(" ");
+                    levelDispList[idx]+=" ";
+                }
             }
-            System.out.println("");
+            
+            // each layer above is (2n)+1, n = spacing of layer below
+            numSpaces*=2;
+            numSpaces++;
+        }
+
+        for (var lvlStr : levelDispList) {
+            System.out.println(lvlStr);
         }
     }
 

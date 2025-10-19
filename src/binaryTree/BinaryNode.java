@@ -9,14 +9,14 @@ public class BinaryNode<T extends Comparable<T>> {
 
     public T key;
     // list of children, left or right
-    private final ArrayList<BinaryNode<T>> children = new ArrayList<BinaryNode<T>>(2);
+    private final ArrayList<BinaryNode<T>> children = new ArrayList<>(2);
 
     // direction — left, right
     enum Direction{
         Left(0), Right(1);
 
         public final int idx;
-        private static Direction[] dirs = {Left,Right};
+        private static final Direction[] dirs = {Left,Right};
         private Direction(int id) {
             this.idx = id;
         }
@@ -29,7 +29,7 @@ public class BinaryNode<T extends Comparable<T>> {
 
     // default constructor sets binary node children
     public BinaryNode() {
-        for(Direction d : Direction.values()){
+        for(Direction _ : Direction.values()){
             children.add(null);
         }
     }
@@ -119,7 +119,7 @@ public class BinaryNode<T extends Comparable<T>> {
     }
 
     public void printByLevel(){
-        HashMap<String,Integer> info = new HashMap<String,Integer>();
+        HashMap<String,Integer> info = new HashMap<>();
         info.put("count", 0);
         info.put("currLvl", 0);
         traverseByLevel((BinaryNode<T> node) -> {

@@ -232,9 +232,15 @@ public class BinaryNode<T extends Comparable<T>> {
         }
     }
 
-    // just prints the map.
+    // generates a map from this as root down, then displays it.
     public void printMap(){
         ArrayList<ArrayList<BinaryNode<T>>> map = new ArrayList<>(this.getTreeMap());
+        printMap(map);
+
+    }
+
+    // static variable that takes a map and displays it.
+    public static <Type extends Comparable<Type>>void printMap(ArrayList<ArrayList<BinaryNode<Type>>> map){
 
         // how many spaces between each element on the last level.
         int numSpaces = 5;
@@ -245,7 +251,7 @@ public class BinaryNode<T extends Comparable<T>> {
         // for each level (going in reverse)
         for (int idx = map.size()-1; idx >= 0; --idx) {
             // get current level
-            ArrayList<BinaryNode<T>> level = map.get(idx);
+            ArrayList<BinaryNode<Type>> level = map.get(idx);
 
             // prepare current level display (null -> "")
             levelDispList[idx]="";
@@ -256,7 +262,7 @@ public class BinaryNode<T extends Comparable<T>> {
             }
             
             // for each node on level, print it and then spacing between
-            for (BinaryNode<T> node : level) {
+            for (var node : level) {
                 if (node == null) {
                     // System.out.print("|");
                     levelDispList[idx]+="|";

@@ -160,6 +160,17 @@ public class BinaryNode<T extends Comparable<T>> {
         }
     }
 
+    // traverse: visit left descendants, then right descendants, then this.
+    protected void traverseChildrenFirst(Consumer<BinaryNode<T>> operation) {
+        if (getChild(Direction.Left) != null) {
+            getChild(Direction.Left).traverseInOrder(operation);
+        }
+        if (getChild(Direction.Right) != null) {
+            getChild(Direction.Right).traverseInOrder(operation);
+        }
+        operation.accept(this);
+    }
+
     public void printInOrder() {
         traverseInOrder((BinaryNode<T> node) -> {
             System.out.println(node.key);

@@ -11,6 +11,11 @@ public class BinaryNode<T extends Comparable<T>> {
     // list of children, left or right
     private final ArrayList<BinaryNode<T>> children = new ArrayList<>(2);
 
+    // gets the child in the spec'd direction
+    private BinaryNode<T> getChild(Direction direction){
+        return children.get(direction.idx);
+    }
+
     // direction — left, right
     enum Direction{
         Left(0), Right(1);

@@ -11,6 +11,15 @@ public class BinaryNode<T extends Comparable<T>> {
     // list of children, left or right
     private final ArrayList<BinaryNode<T>> children = new ArrayList<>(2);
 
+    // gets the child in the spec'd direction
+    private BinaryNode<T> getChild(Direction direction){
+        return children.get(direction.idx);
+    }
+
+    private void setChild(Direction direction, BinaryNode<T> node){
+        children.set(direction.idx, node);
+    }
+
     // direction — left, right
     enum Direction{
         Left(0), Right(1);
@@ -43,7 +52,14 @@ public class BinaryNode<T extends Comparable<T>> {
 
     // helper fn - same as below override, but first arg is dir enum instead of int idx
     private boolean insertChild(Direction dir, BinaryNode<T> node){
-        return insertChild(dir.idx, node);
+        // if children dne,
+        // set children
+        if(getChild(dir)==null){
+            setChild(dir, node);
+            return true;
+        }
+        // else, can't insert children in place where child already exists!
+        return false;
     }
 
     // helper fn - insert child in specified direction, return bool for success
@@ -110,7 +126,7 @@ public class BinaryNode<T extends Comparable<T>> {
 
             // add all existing children in queue
             for(Direction dir : Direction.dirs){
-                BinaryNode<T> nextChild = curr.children.get(dir.idx);
+                BinaryNode<T> nextChild = curr.getChild(dir);
                 if (nextChild!=null) {
                     nodeQueue.add(nextChild);
                 }
@@ -134,12 +150,12 @@ public class BinaryNode<T extends Comparable<T>> {
 
     // traverse. visit left descendants, then this, then right descendants.
     protected void traverseInOrder(Consumer<BinaryNode<T>> operation) {
-        if (children.get(Direction.Left.idx) != null) {
-            children.get(Direction.Left.idx).traverseInOrder(operation);
+        if (getChild(Direction.Left) != null) {
+            getChild(Direction.Left).traverseInOrder(operation);
         }
         operation.accept(this);
-        if (children.get(Direction.Right.idx) != null) {
-            children.get(Direction.Right.idx).traverseInOrder(operation);
+        if (getChild(Direction.Right) != null) {
+            getChild(Direction.Right).traverseInOrder(operation);
         }
     }
 
@@ -242,6 +258,21 @@ public class BinaryNode<T extends Comparable<T>> {
 
         for (var lvlStr : levelDispList) {
             System.out.println(lvlStr);
+        }
+    }
+
+    public void FlipFromHere(){
+        // swaps left and right
+        BinaryNode<T> origLeft = getChild(Direction.Left);
+        setChild(Direction.Left, getChild(Direction.Right));
+        setChild(Direction.Right, origLeft);
+
+        // do the same for all children
+        for (var node : children) {
+            if (node==null) {
+                continue;
+            }
+            node.FlipFromHere();
         }
     }
 

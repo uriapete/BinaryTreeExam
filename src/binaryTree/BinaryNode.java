@@ -21,6 +21,9 @@ public class BinaryNode<T extends Comparable<T>> {
 
     private void setChild(Direction direction, BinaryNode<T> node){
         children.set(direction.idx, node);
+        if (node==null) {
+            return;
+        }
         node.parents.set(Direction.getDirection(direction.idx+1).idx, this);
     }
 

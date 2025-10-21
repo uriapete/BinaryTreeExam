@@ -232,6 +232,54 @@ public class BinaryNode<T extends Comparable<T>> {
         }
     }
 
+    public LinkedList<ArrayList<BinaryNode<T>>> getTreeMapReverse(){
+        // return var
+        LinkedList<ArrayList<BinaryNode<T>>> map = new LinkedList<>();
+
+        // add root to map
+        ArrayList<BinaryNode<T>> rootList = new ArrayList<>(1);
+        rootList.add(this);
+        map.add(rootList);
+        
+        int level = 0;
+        
+        // for each level...
+        while (true) {
+            // get the current level
+            ArrayList<BinaryNode<T>> currLevel = map.getLast();
+
+            // prepare the next level
+            ++level;
+            map.add(new ArrayList<>((int)Math.pow(parents.size(), level)));
+            ArrayList<BinaryNode<T>> nextLevel = map.getLast();
+
+            // assume all parents are null until otherwise
+            boolean currLvlAllNull = true;
+
+            // for each node in the current level...
+            // append all parents to the next level
+            // add two nulls if the current node is null
+            for (BinaryNode<T> node : currLevel) {
+                if (node == null) {
+                    for (int j = 0; j < 2; j++) {
+                        nextLevel.add(null);
+                    }
+                    continue;
+                }
+                currLvlAllNull=false;
+                map.getLast().addAll(node.parents);
+            }
+
+            // if the current level is all empty, remove the all node levels, return
+            if(currLvlAllNull){
+                for (int i = 0; i < 2; i++) {
+                    map.removeLast();
+                }
+                return map.reversed();
+            }
+        }
+    }
+
     // generates a map from this as root down, then displays it.
     public void printMap(){
         ArrayList<ArrayList<BinaryNode<T>>> map = new ArrayList<>(this.getTreeMap());

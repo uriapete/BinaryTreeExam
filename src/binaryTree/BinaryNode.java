@@ -8,8 +8,11 @@ import java.util.function.Consumer;
 public class BinaryNode<T extends Comparable<T>> {
 
     public T key;
-    // list of children, left or right
-    private final ArrayList<BinaryNode<T>> children = new ArrayList<>(2);
+    // list of children, dependant on number of directions spec'd in enum
+    private final ArrayList<BinaryNode<T>> children = new ArrayList<>(Direction.dirs.length);
+
+    // list of parents
+    private final ArrayList<BinaryNode<T>> parents = new ArrayList<>(Direction.dirs.length);
 
     // gets the child in the spec'd direction
     private BinaryNode<T> getChild(Direction direction){
@@ -18,6 +21,10 @@ public class BinaryNode<T extends Comparable<T>> {
 
     private void setChild(Direction direction, BinaryNode<T> node){
         children.set(direction.idx, node);
+        if (node==null) {
+            return;
+        }
+        node.parents.set(Direction.getDirection(direction.idx+1).idx, this);
     }
 
     // direction — left, right
@@ -30,7 +37,7 @@ public class BinaryNode<T extends Comparable<T>> {
             this.idx = id;
         }
 
-        public Direction getDirection(int id){
+        static public Direction getDirection(int id){
             return dirs[(id%2)];
         }
         
@@ -40,6 +47,7 @@ public class BinaryNode<T extends Comparable<T>> {
     public BinaryNode() {
         for(Direction _ : Direction.values()){
             children.add(null);
+            parents.add(null);
         }
     }
 
@@ -50,7 +58,7 @@ public class BinaryNode<T extends Comparable<T>> {
         key = k;
     }
 
-    // helper fn - same as below override, but first arg is dir enum instead of int idx
+    // helper fn - insert child in specified direction, return bool for success
     private boolean insertChild(Direction dir, BinaryNode<T> node){
         // if children dne,
         // set children
@@ -62,16 +70,9 @@ public class BinaryNode<T extends Comparable<T>> {
         return false;
     }
 
-    // helper fn - insert child in specified direction, return bool for success
+    // helper fn - same as below override, but first arg is dir enum instead of int idx
     private boolean insertChild(int diridx, BinaryNode<T> node){
-        // if children dne,
-        // set children
-        if (children.get(diridx) == null) {
-            children.set(diridx, node);
-            return true;
-        }
-        // else, can't insert children in place where child already exists!
-        return false;
+        return insertChild(Direction.getDirection(diridx), node);
     }
 
     // creates a key and inserts it as a descendant (if key does not already exist in this subtree)

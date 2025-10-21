@@ -9,10 +9,10 @@ public class BinaryNode<T extends Comparable<T>> {
 
     public T key;
     // list of children, dependant on number of directions spec'd in enum
-    private final ArrayList<BinaryNode<T>> children = new ArrayList<>(Direction.dirs.length);
+    private ArrayList<BinaryNode<T>> children = new ArrayList<>(Direction.dirs.length);
 
     // list of parents
-    private final ArrayList<BinaryNode<T>> parents = new ArrayList<>(Direction.dirs.length);
+    private ArrayList<BinaryNode<T>> parents = new ArrayList<>(Direction.dirs.length);
 
     // gets the child in the spec'd direction
     private BinaryNode<T> getChild(Direction direction){
@@ -107,6 +107,13 @@ public class BinaryNode<T extends Comparable<T>> {
         
         // if it didn't work, try descendents
         return children.get(childIdx).insertNode(node);
+    }
+
+    // swaps children and parent.
+    private void swapChildParent(){
+        ArrayList<BinaryNode<T>> newParent = this.children;
+        this.children = this.parents;
+        this.parents = newParent;
     }
 
     // goes thru the tree by level, top to bottom

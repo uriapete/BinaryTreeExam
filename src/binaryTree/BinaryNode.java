@@ -16,6 +16,10 @@ public class BinaryNode<T extends Comparable<T>> {
         return children.get(direction.idx);
     }
 
+    private void setChild(Direction direction, BinaryNode<T> node){
+        children.set(direction.idx, node);
+    }
+
     // direction — left, right
     enum Direction{
         Left(0), Right(1);
@@ -51,7 +55,7 @@ public class BinaryNode<T extends Comparable<T>> {
         // if children dne,
         // set children
         if(getChild(dir)==null){
-            children.set(dir.idx, node);
+            setChild(dir, node);
             return true;
         }
         // else, can't insert children in place where child already exists!

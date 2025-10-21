@@ -8,8 +8,8 @@ import java.util.function.Consumer;
 public class BinaryNode<T extends Comparable<T>> {
 
     public T key;
-    // list of children, left or right
-    private final ArrayList<BinaryNode<T>> children = new ArrayList<>(2);
+    // list of children, dependant on number of directions spec'd in enum
+    private final ArrayList<BinaryNode<T>> children = new ArrayList<>(Direction.dirs.length);
 
     // gets the child in the spec'd direction
     private BinaryNode<T> getChild(Direction direction){

@@ -285,9 +285,8 @@ public class BinaryNode<T extends Comparable<T>> {
     // generates a map from this as root down, then displays it.
     public void printMap(){
         ArrayList<ArrayList<BinaryNode<T>>> map = new ArrayList<>(this.getTreeMap());
-        String[] mapDisplay = generateStringDisplayFromMap(map);   
-        List<String> reverseList = Arrays.asList(mapDisplay).reversed();
-        for (var lvlStr : reverseList) {
+        String[] mapDisplay = generateStringDisplayFromMap(map);
+        for (var lvlStr : mapDisplay) {
             System.out.println(lvlStr);
         }
 
@@ -296,7 +295,9 @@ public class BinaryNode<T extends Comparable<T>> {
     public void printMapReverse(){
         ArrayList<ArrayList<BinaryNode<T>>> map = new ArrayList<>(this.getTreeMapReverse());
         String[] mapDisplay = generateStringDisplayFromMap(map);
-        for (var lvlStr : mapDisplay) {
+        // thank you geeks for geeks
+        List<String> reverseList = Arrays.asList(mapDisplay).reversed();
+        for (var lvlStr : reverseList) {
             System.out.println(lvlStr);
         }
     }

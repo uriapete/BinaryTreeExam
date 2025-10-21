@@ -1,8 +1,10 @@
 package binaryTree;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Consumer;
 
 public class BinaryNode<T extends Comparable<T>> {
@@ -275,7 +277,7 @@ public class BinaryNode<T extends Comparable<T>> {
                 for (int i = 0; i < 2; i++) {
                     map.removeLast();
                 }
-                return map.reversed();
+                return map;
             }
         }
     }
@@ -283,27 +285,34 @@ public class BinaryNode<T extends Comparable<T>> {
     // generates a map from this as root down, then displays it.
     public void printMap(){
         ArrayList<ArrayList<BinaryNode<T>>> map = new ArrayList<>(this.getTreeMap());
-        printMap(map);
+        String[] mapDisplay = generateStringDisplayFromMap(map);   
+        List<String> reverseList = Arrays.asList(mapDisplay).reversed();
+        for (var lvlStr : reverseList) {
+            System.out.println(lvlStr);
+        }
 
     }
 
     public void printMapReverse(){
-        printMap(new ArrayList<>(getTreeMapReverse()));
+        ArrayList<ArrayList<BinaryNode<T>>> map = new ArrayList<>(this.getTreeMapReverse());
+        String[] mapDisplay = generateStringDisplayFromMap(map);
+        for (var lvlStr : mapDisplay) {
+            System.out.println(lvlStr);
+        }
     }
 
-    // static variable that takes a map and displays it.
-    public static <Type extends Comparable<Type>>void printMap(ArrayList<ArrayList<BinaryNode<Type>>> map){
-
-        // how many spaces between each element on the last level.
-        int numSpaces = 5;
-
-        // prepare list of level displays
-        String[] levelDispList = new String[map.size()];
-
-        // for each level (going in reverse)
-        for (int idx = map.size()-1; idx >= 0; --idx) {
-            // get current level
-            ArrayList<BinaryNode<Type>> level = map.get(idx);
+    // static variable that takes a map and turns it into an array of string displays per level.
+    public static<Type extends Comparable<Type>>String[] generateStringDisplayFromMap(ArrayList<ArrayList<BinaryNode<Type>>> map){
+            // how many spaces between each element on the last level.
+            int numSpaces = 5;
+    
+            // prepare list of level displays
+            String[] levelDispList = new String[map.size()];
+    
+            // for each level (going in reverse)
+            for (int idx = map.size()-1; idx >= 0; --idx) {
+                // get current level
+                ArrayList<BinaryNode<Type>> level = new ArrayList<>(map.get(idx));
 
             // prepare current level display (null -> "")
             levelDispList[idx]="";
@@ -333,9 +342,7 @@ public class BinaryNode<T extends Comparable<T>> {
             numSpaces++;
         }
 
-        for (var lvlStr : levelDispList) {
-            System.out.println(lvlStr);
-        }
+        return levelDispList;
     }
 
     public void FlipFromHere(){

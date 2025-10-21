@@ -48,7 +48,14 @@ public class BinaryNode<T extends Comparable<T>> {
 
     // helper fn - same as below override, but first arg is dir enum instead of int idx
     private boolean insertChild(Direction dir, BinaryNode<T> node){
-        return insertChild(dir.idx, node);
+        // if children dne,
+        // set children
+        if(getChild(dir)==null){
+            children.set(dir.idx, node);
+            return true;
+        }
+        // else, can't insert children in place where child already exists!
+        return false;
     }
 
     // helper fn - insert child in specified direction, return bool for success
@@ -115,7 +122,7 @@ public class BinaryNode<T extends Comparable<T>> {
 
             // add all existing children in queue
             for(Direction dir : Direction.dirs){
-                BinaryNode<T> nextChild = curr.children.get(dir.idx);
+                BinaryNode<T> nextChild = curr.getChild(dir);
                 if (nextChild!=null) {
                     nodeQueue.add(nextChild);
                 }
@@ -139,12 +146,12 @@ public class BinaryNode<T extends Comparable<T>> {
 
     // traverse. visit left descendants, then this, then right descendants.
     protected void traverseInOrder(Consumer<BinaryNode<T>> operation) {
-        if (children.get(Direction.Left.idx) != null) {
-            children.get(Direction.Left.idx).traverseInOrder(operation);
+        if (getChild(Direction.Left) != null) {
+            getChild(Direction.Left).traverseInOrder(operation);
         }
         operation.accept(this);
-        if (children.get(Direction.Right.idx) != null) {
-            children.get(Direction.Right.idx).traverseInOrder(operation);
+        if (getChild(Direction.Right) != null) {
+            getChild(Direction.Right).traverseInOrder(operation);
         }
     }
 

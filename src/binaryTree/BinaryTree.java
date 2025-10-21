@@ -27,6 +27,15 @@ public class BinaryTree {
       intRoot.FlipFromHere();
 
       intRoot.printMap();
+      
+      intRoot.FlipUpsideDown();
+
+      System.out.println("\nNEXT - UPSIDE DOWN");
+      intRoot.printMapReverse();
+
+      System.out.println("\nPROOF WE DIDN'T JUST REVERSE THE LEVELS IN DISPLAY ONLY");
+      intRoot.printMap();
+      System.out.println("As you can see, we tried to print the regular way from the former root, but stops as the root is now the grandest child.");
 
 	}
 

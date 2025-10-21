@@ -1,18 +1,20 @@
 package binaryTree;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Consumer;
 
 public class BinaryNode<T extends Comparable<T>> {
 
     public T key;
     // list of children, dependant on number of directions spec'd in enum
-    private final ArrayList<BinaryNode<T>> children = new ArrayList<>(Direction.dirs.length);
+    private ArrayList<BinaryNode<T>> children = new ArrayList<>(Direction.dirs.length);
 
     // list of parents
-    private final ArrayList<BinaryNode<T>> parents = new ArrayList<>(Direction.dirs.length);
+    private ArrayList<BinaryNode<T>> parents = new ArrayList<>(Direction.dirs.length);
 
     // gets the child in the spec'd direction
     private BinaryNode<T> getChild(Direction direction){
@@ -109,6 +111,13 @@ public class BinaryNode<T extends Comparable<T>> {
         return children.get(childIdx).insertNode(node);
     }
 
+    // swaps children and parent.
+    private void swapChildParent(){
+        ArrayList<BinaryNode<T>> newParent = this.children;
+        this.children = this.parents;
+        this.parents = newParent;
+    }
+
     // goes thru the tree by level, top to bottom
     protected void traverseByLevel(Consumer<BinaryNode<T>> operation){
         // queue of nodes
@@ -158,6 +167,17 @@ public class BinaryNode<T extends Comparable<T>> {
         if (getChild(Direction.Right) != null) {
             getChild(Direction.Right).traverseInOrder(operation);
         }
+    }
+
+    // traverse: visit left descendants, then right descendants, then this.
+    protected void traverseChildrenFirst(Consumer<BinaryNode<T>> operation) {
+        if (getChild(Direction.Left) != null) {
+            getChild(Direction.Left).traverseChildrenFirst(operation);
+        }
+        if (getChild(Direction.Right) != null) {
+            getChild(Direction.Right).traverseChildrenFirst(operation);
+        }
+        operation.accept(this);
     }
 
     public void printInOrder() {
@@ -214,20 +234,86 @@ public class BinaryNode<T extends Comparable<T>> {
         }
     }
 
-    // just prints the map.
+    public LinkedList<ArrayList<BinaryNode<T>>> getTreeMapReverse(){
+        // return var
+        LinkedList<ArrayList<BinaryNode<T>>> map = new LinkedList<>();
+
+        // add root to map
+        ArrayList<BinaryNode<T>> rootList = new ArrayList<>(1);
+        rootList.add(this);
+        map.add(rootList);
+        
+        int level = 0;
+        
+        // for each level...
+        while (true) {
+            // get the current level
+            ArrayList<BinaryNode<T>> currLevel = map.getLast();
+
+            // prepare the next level
+            ++level;
+            map.add(new ArrayList<>((int)Math.pow(parents.size(), level)));
+            ArrayList<BinaryNode<T>> nextLevel = map.getLast();
+
+            // assume all parents are null until otherwise
+            boolean currLvlAllNull = true;
+
+            // for each node in the current level...
+            // append all parents to the next level
+            // add two nulls if the current node is null
+            for (BinaryNode<T> node : currLevel) {
+                if (node == null) {
+                    for (int j = 0; j < 2; j++) {
+                        nextLevel.add(null);
+                    }
+                    continue;
+                }
+                currLvlAllNull=false;
+                map.getLast().addAll(node.parents);
+            }
+
+            // if the current level is all empty, remove the all node levels, return
+            if(currLvlAllNull){
+                for (int i = 0; i < 2; i++) {
+                    map.removeLast();
+                }
+                return map;
+            }
+        }
+    }
+
+    // generates a map from this as root down, then displays it.
     public void printMap(){
         ArrayList<ArrayList<BinaryNode<T>>> map = new ArrayList<>(this.getTreeMap());
+        String[] mapDisplay = generateStringDisplayFromMap(map);
+        for (var lvlStr : mapDisplay) {
+            System.out.println(lvlStr);
+        }
 
-        // how many spaces between each element on the last level.
-        int numSpaces = 5;
+    }
 
-        // prepare list of level displays
-        String[] levelDispList = new String[map.size()];
+    public void printMapReverse(){
+        ArrayList<ArrayList<BinaryNode<T>>> map = new ArrayList<>(this.getTreeMapReverse());
+        String[] mapDisplay = generateStringDisplayFromMap(map);
+        // thank you geeks for geeks for showing me how to convert array[] to list<>()
+        List<String> reverseList = Arrays.asList(mapDisplay).reversed();
+        for (var lvlStr : reverseList) {
+            System.out.println(lvlStr);
+        }
+    }
 
-        // for each level (going in reverse)
-        for (int idx = map.size()-1; idx >= 0; --idx) {
-            // get current level
-            ArrayList<BinaryNode<T>> level = map.get(idx);
+    // static variable that takes a map and turns it into an array of string displays per level.
+    public static<Type extends Comparable<Type>>String[] generateStringDisplayFromMap(ArrayList<ArrayList<BinaryNode<Type>>> map){
+            // how many spaces between each element on the last level.
+            int numSpaces = 5;
+    
+            // prepare list of level displays
+            String[] levelDispList = new String[map.size()];
+    
+            // for each level (going in reverse)
+            for (int idx = map.size()-1; idx >= 0; --idx) {
+                // get current level
+                ArrayList<BinaryNode<Type>> level = new ArrayList<>(map.get(idx));
 
             // prepare current level display (null -> "")
             levelDispList[idx]="";
@@ -238,7 +324,7 @@ public class BinaryNode<T extends Comparable<T>> {
             }
             
             // for each node on level, print it and then spacing between
-            for (BinaryNode<T> node : level) {
+            for (var node : level) {
                 if (node == null) {
                     // System.out.print("|");
                     levelDispList[idx]+="|";
@@ -257,9 +343,7 @@ public class BinaryNode<T extends Comparable<T>> {
             numSpaces++;
         }
 
-        for (var lvlStr : levelDispList) {
-            System.out.println(lvlStr);
-        }
+        return levelDispList;
     }
 
     public void FlipFromHere(){
@@ -275,6 +359,15 @@ public class BinaryNode<T extends Comparable<T>> {
             }
             node.FlipFromHere();
         }
+    }
+
+    // bottom up, swap children and parents.
+    public void FlipUpsideDown(){
+        traverseChildrenFirst(
+            (var node)-> {
+                node.swapChildParent();
+            }
+        );
     }
 
     // Follow the steps below to use this file

@@ -261,6 +261,21 @@ public class BinaryNode<T extends Comparable<T>> {
         }
     }
 
+    public void FlipFromHere(){
+        // swaps left and right
+        BinaryNode<T> origLeft = getChild(Direction.Left);
+        setChild(Direction.Left, getChild(Direction.Right));
+        setChild(Direction.Right, origLeft);
+
+        // do the same for all children
+        for (var node : children) {
+            if (node==null) {
+                continue;
+            }
+            node.FlipFromHere();
+        }
+    }
+
     // Follow the steps below to use this file
     // 1. In the main file, create an instance of this class:
     // NewClass1 instance1 = new NewClass1();

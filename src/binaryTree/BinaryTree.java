@@ -23,6 +23,11 @@ public class BinaryTree {
       
       intRoot.printMap();
 
+      System.out.println("\nNEXT - FLIP");
+      intRoot.FlipFromHere();
+
+      intRoot.printMap();
+
 	}
 
 }

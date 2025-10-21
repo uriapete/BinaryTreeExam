@@ -295,6 +295,15 @@ public class BinaryNode<T extends Comparable<T>> {
         }
     }
 
+    // bottom up, swap children and parents.
+    public void FlipUpsideDown(){
+        traverseChildrenFirst(
+            (var node)-> {
+                node.swapChildParent();
+            }
+        );
+    }
+
     // Follow the steps below to use this file
     // 1. In the main file, create an instance of this class:
     // NewClass1 instance1 = new NewClass1();

@@ -287,6 +287,10 @@ public class BinaryNode<T extends Comparable<T>> {
 
     }
 
+    public void printMapReverse(){
+        printMap(new ArrayList<>(getTreeMapReverse()));
+    }
+
     // static variable that takes a map and displays it.
     public static <Type extends Comparable<Type>>void printMap(ArrayList<ArrayList<BinaryNode<Type>>> map){
 

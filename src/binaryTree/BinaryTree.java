@@ -12,8 +12,6 @@ public class BinaryTree {
       intRoot.insertKey(3);
       intRoot.insertKey(6);
       intRoot.insertKey(9);
-//      intRoot.insertKey(10);
-//      intRoot.insertKey(11);
 
 	  System.out.println();
       

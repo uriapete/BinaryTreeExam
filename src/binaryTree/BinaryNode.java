@@ -62,7 +62,7 @@ public class BinaryNode<T extends Comparable<T>> {
 
     // helper fn - insert child in specified direction, return bool for success
     private boolean insertChild(Direction dir, BinaryNode<T> node){
-        // if children dne,
+        // if children does not exist,
         // set children
         if(getChild(dir)==null){
             setChild(dir, node);
